@@ -9,18 +9,17 @@ const mongoose = require('mongoose');
 
 const productRoutes =require('./api/routes/products');
 const OrdersRoutes =require('./api/routes/Orders');
-const NewProduct =require('./api/routes/NewProducts');
-const DecorProduct =require('./api/routes/DecorProducts');
-const BathProduct =require('./api/routes/BathProducts');
-const GiftProduct =require('./api/routes/GiftProducts');
-const JewelleryProduct =require('./api/routes/JewelleryProducts');
+
 const ContactUs =require('./api/routes/ContactUs');
 
+const userRoutes = require('./api/routes/User');
+
 mongoose.connect(
-    'mongodb+srv://Mina-Mounir:minamoneR018@mina-rest-api.qyyly.mongodb.net/Mina-rest-api?retryWrites=true&w=majority',
+    'mongodb+srv://Mina-Mounir:minamoneR018@pets.drhkk.mongodb.net/Pets?retryWrites=true&w=majority',
 { 
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
 });
 mongoose.Promise = global.Promise;
 
@@ -37,7 +36,7 @@ app.use((req, res, next) => {
         ); 
         if(req.method === 'OPTIONS')
         {
-            res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE,GET');
+            res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
             return res.status(200).json({});
         }
         next();
@@ -46,12 +45,9 @@ app.use((req, res, next) => {
 
 app.use('/orders', OrdersRoutes);
 app.use('/products', productRoutes);
-app.use('/newproducts', NewProduct);
-app.use('/decorproducts', DecorProduct);
-app.use('/bathproducts', BathProduct);
-app.use('/jewelleryproducts', JewelleryProduct);
-app.use('/giftproducts', GiftProduct);
 app.use('/contactus', ContactUs);
+app.use('/user', userRoutes);
+
 
 app.use((req, res, next) => {
     const error= new Error('Error not found');
