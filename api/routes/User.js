@@ -109,7 +109,7 @@ router.post('/login', (req, res, next) => {
                     name: user[0].name,
                     number: user[0].number
                 }, 
-                process.env.JWT_KEY, {
+                "secret", {
                     expiresIn: "1 days", 
                 }
             );
