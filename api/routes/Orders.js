@@ -6,10 +6,13 @@ const checkAuth = require('../middleware/check-auth');
 const Order = require("../models/order");
 const Product = require("../models/product");
 
+const User = require("../models/User");
+
+
 // Handle incoming GET requests to /orders
 router.get("/", checkAuth, (req, res, next) => {
   Order.find()
-    .select("product quantity _id")
+    .select("productId quantity _id userId")
     .populate('product', 'name')
     .exec()
     .then(docs => {
@@ -18,7 +21,8 @@ router.get("/", checkAuth, (req, res, next) => {
         orders: docs.map(doc => {
           return {
             _id: doc._id,
-            product: doc.product,
+            productId: doc.productId,
+            userId: doc.userId,
             quantity: doc.quantity,
             request: {
               type: "GET",
@@ -35,9 +39,9 @@ router.get("/", checkAuth, (req, res, next) => {
     });
 });
 
-router.post("/", checkAuth, (req, res, next) => {
+router.post("/", (req, res, next) => {
   Product.findById(req.body.productId)
-    .then(product => {
+    .then(product => { 
       if (!product) {
         return res.status(404).json({
           message: "Product not found"
@@ -46,7 +50,8 @@ router.post("/", checkAuth, (req, res, next) => {
       const order = new Order({
         _id: mongoose.Types.ObjectId(),
         quantity: req.body.quantity,
-        product: req.body.productId
+        productId: req.body.productId,
+        userId: req.body.userId
       });
       return order.save();
     })
@@ -56,8 +61,9 @@ router.post("/", checkAuth, (req, res, next) => {
         message: "Order stored",
         createdOrder: {
           _id: result._id,
-          product: result.product,
-          quantity: result.quantity
+          productId: result.productId,
+          quantity: result.quantity,
+          userId: result.userId
         },
         request: {
           type: "GET",

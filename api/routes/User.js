@@ -50,9 +50,9 @@ router.post('/signup', (req, res, next) => {
 
 
 
-router.get('/',(req, res, next) =>{
+router.get('/',checkAuth,(req, res, next) =>{
     User.find()
-    .select('name email _id number')
+    .select('name email _id number orders')
     .exec()
     .then(docs => {
         console.log(docs);
@@ -64,8 +64,8 @@ router.get('/',(req, res, next) =>{
     });
 });
 
-router.get('/:userId', checkAuth, (req, res, next) =>{
-    const id= req.params.userId;
+router.get('/one', checkAuth, (req, res, next) =>{
+    const id= req.userData.userId;
     User.findById(id)
     .select('name email _id number')
     .exec()
@@ -110,7 +110,7 @@ router.post('/login', (req, res, next) => {
                     number: user[0].number
                 }, 
                 "secret", {
-                    expiresIn: "1 days", 
+                    expiresIn: "30 days", 
                 }
             );
                 return res.status(200).json({
